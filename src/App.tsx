@@ -6,6 +6,9 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
+import AdminAuth from "./pages/AdminAuth";
+import AdminDashboard from "./pages/AdminDashboard";
+import PendingApproval from "./pages/PendingApproval";
 import RisetMarket from "./pages/RisetMarket";
 import AnalisisKompetitor from "./pages/AnalisisKompetitor";
 import Positioning from "./pages/Positioning";
@@ -25,9 +28,10 @@ import NotFound from "./pages/NotFound";
 const queryClient = new QueryClient();
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth();
+  const { user, loading, isApproved } = useAuth();
   if (loading) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Memuat...</div>;
   if (!user) return <Navigate to="/auth" replace />;
+  if (!isApproved) return <PendingApproval />;
   return <>{children}</>;
 }
 
@@ -35,6 +39,8 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/auth" element={<Auth />} />
+      <Route path="/admin" element={<AdminAuth />} />
+      <Route path="/admin/dashboard" element={<AdminDashboard />} />
       <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
       <Route path="/riset-market" element={<ProtectedRoute><RisetMarket /></ProtectedRoute>} />
       <Route path="/analisis-kompetitor" element={<ProtectedRoute><AnalisisKompetitor /></ProtectedRoute>} />
