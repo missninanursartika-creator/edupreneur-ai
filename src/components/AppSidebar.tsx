@@ -1,7 +1,7 @@
 import {
   LayoutDashboard, Search, Users, Target, BookOpen, Heart,
   Lightbulb, Dna, Briefcase, Megaphone, PenTool, MessageCircle,
-  History, LogOut, UserCircle
+  BarChart3, History, LogOut, UserCircle
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -25,6 +25,7 @@ const menuItems = [
   { title: "Strategi Marketing PPDB", url: "/marketing-ppdb", icon: Megaphone },
   { title: "Konten Marketing", url: "/konten-marketing", icon: PenTool },
   { title: "AI Konsultan Sekolah", url: "/konsultan-ai", icon: MessageCircle },
+  { title: "AI SWOT Analyzer", url: "/swot-analyzer", icon: BarChart3 },
   { title: "Riwayat Analisis", url: "/riwayat", icon: History },
   { title: "Profil Saya", url: "/profil", icon: UserCircle },
 ];
