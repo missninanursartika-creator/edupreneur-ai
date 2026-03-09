@@ -95,6 +95,7 @@ export default function Riwayat() {
     toast({ title: "PDF berhasil diunduh!" });
   };
 
+  return (
     <DashboardLayout>
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center gap-2 mb-6">
