@@ -26,6 +26,7 @@ const menuItems = [
   { title: "Konten Marketing", url: "/konten-marketing", icon: PenTool },
   { title: "AI Konsultan Sekolah", url: "/konsultan-ai", icon: MessageCircle },
   { title: "Riwayat Analisis", url: "/riwayat", icon: History },
+  { title: "Profil Saya", url: "/profil", icon: UserCircle },
 ];
 
 export function AppSidebar() {
