@@ -1,13 +1,16 @@
 import {
   LayoutDashboard, Search, Users, Target, BookOpen, Heart,
-  Lightbulb, Dna, Briefcase, Megaphone, PenTool, MessageCircle
+  Lightbulb, Dna, Briefcase, Megaphone, PenTool, MessageCircle,
+  History, LogOut
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent,
   SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem,
-  SidebarHeader, useSidebar,
+  SidebarHeader, SidebarFooter, useSidebar,
 } from "@/components/ui/sidebar";
+import { useAuth } from "@/contexts/AuthContext";
+import { Button } from "@/components/ui/button";
 
 const menuItems = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
@@ -22,11 +25,13 @@ const menuItems = [
   { title: "Strategi Marketing PPDB", url: "/marketing-ppdb", icon: Megaphone },
   { title: "Konten Marketing", url: "/konten-marketing", icon: PenTool },
   { title: "AI Konsultan Sekolah", url: "/konsultan-ai", icon: MessageCircle },
+  { title: "Riwayat Analisis", url: "/riwayat", icon: History },
 ];
 
 export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
+  const { signOut, user } = useAuth();
 
   return (
     <Sidebar collapsible="icon">
@@ -67,6 +72,20 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarFooter className="p-3">
+        {!collapsed && user && (
+          <div className="text-xs opacity-80 mb-2 truncate">{user.email}</div>
+        )}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={signOut}
+          className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent/50"
+        >
+          <LogOut className="h-4 w-4 mr-2" />
+          {!collapsed && "Keluar"}
+        </Button>
+      </SidebarFooter>
     </Sidebar>
   );
 }
