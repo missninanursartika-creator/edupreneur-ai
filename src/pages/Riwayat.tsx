@@ -56,7 +56,45 @@ export default function Riwayat() {
   const formatDate = (d: string) =>
     new Date(d).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
 
-  return (
+  const handleExportPDF = async (r: AnalysisResult) => {
+    const html2pdf = (await import("html2pdf.js")).default;
+    const element = document.createElement("div");
+    // Render markdown to HTML
+    const tempDiv = document.createElement("div");
+    const { createRoot } = await import("react-dom/client");
+    const root = createRoot(tempDiv);
+    const { default: ReactMarkdownDyn } = await import("react-markdown");
+    await new Promise<void>((resolve) => {
+      root.render(<ReactMarkdownDyn>{r.result}</ReactMarkdownDyn>);
+      setTimeout(resolve, 100);
+    });
+
+    element.innerHTML = `
+      <div style="font-family: 'Helvetica', 'Arial', sans-serif; padding: 20px; color: #1a1a2e;">
+        <div style="border-bottom: 3px solid #2563eb; padding-bottom: 12px; margin-bottom: 20px;">
+          <h1 style="margin: 0; font-size: 22px; color: #2563eb;">School Strategy AI</h1>
+          <p style="margin: 4px 0 0; font-size: 11px; color: #6b7280;">Laporan Analisis</p>
+        </div>
+        <h2 style="font-size: 18px; margin-bottom: 4px;">${r.title}</h2>
+        <p style="font-size: 12px; color: #6b7280; margin-bottom: 16px;">Modul: ${r.module} • ${formatDate(r.created_at)}</p>
+        <div style="font-size: 13px; line-height: 1.7;">${tempDiv.innerHTML}</div>
+        <div style="border-top: 1px solid #e5e7eb; margin-top: 30px; padding-top: 10px; font-size: 10px; color: #9ca3af; text-align: center;">
+          Dibuat dengan School Strategy AI
+        </div>
+      </div>
+    `;
+    root.unmount();
+
+    html2pdf().set({
+      margin: [10, 10, 10, 10],
+      filename: `${r.title.replace(/\s+/g, "-").toLowerCase()}.pdf`,
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" as const },
+    }).from(element).save();
+    toast({ title: "PDF berhasil diunduh!" });
+  };
+
     <DashboardLayout>
       <div className="max-w-4xl mx-auto">
         <div className="flex items-center gap-2 mb-6">
