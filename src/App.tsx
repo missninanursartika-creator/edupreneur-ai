@@ -17,6 +17,7 @@ import ModelBisnis from "./pages/ModelBisnis";
 import MarketingPPDB from "./pages/MarketingPPDB";
 import KontenMarketing from "./pages/KontenMarketing";
 import KonsultanAI from "./pages/KonsultanAI";
+import SwotAnalyzer from "./pages/SwotAnalyzer";
 import Riwayat from "./pages/Riwayat";
 import Profil from "./pages/Profil";
 import NotFound from "./pages/NotFound";
