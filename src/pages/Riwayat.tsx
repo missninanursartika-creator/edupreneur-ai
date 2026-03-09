@@ -13,7 +13,7 @@ interface AnalysisResult {
   id: string;
   module: string;
   title: string;
-  input_data: Record<string, any>;
+  input_data: any;
   result: string;
   created_at: string;
 }
