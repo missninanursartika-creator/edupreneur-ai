@@ -87,6 +87,9 @@ export default function Riwayat() {
                     <Button variant="outline" size="sm" onClick={() => setSelected(r)}>
                       <Eye className="h-4 w-4" />
                     </Button>
+                    <Button variant="outline" size="sm" onClick={() => handleExportPDF(r)}>
+                      <Download className="h-4 w-4" />
+                    </Button>
                     <Button variant="outline" size="sm" onClick={() => handleDelete(r.id)}>
                       <Trash2 className="h-4 w-4 text-destructive" />
                     </Button>
