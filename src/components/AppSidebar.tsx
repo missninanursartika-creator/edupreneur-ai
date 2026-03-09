@@ -1,7 +1,7 @@
 import {
   LayoutDashboard, Search, Users, Target, BookOpen, Heart,
   Lightbulb, Dna, Briefcase, Megaphone, PenTool, MessageCircle,
-  History, LogOut
+  History, LogOut, UserCircle
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -26,6 +26,7 @@ const menuItems = [
   { title: "Konten Marketing", url: "/konten-marketing", icon: PenTool },
   { title: "AI Konsultan Sekolah", url: "/konsultan-ai", icon: MessageCircle },
   { title: "Riwayat Analisis", url: "/riwayat", icon: History },
+  { title: "Profil Saya", url: "/profil", icon: UserCircle },
 ];
 
 export function AppSidebar() {

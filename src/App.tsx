@@ -18,6 +18,7 @@ import MarketingPPDB from "./pages/MarketingPPDB";
 import KontenMarketing from "./pages/KontenMarketing";
 import KonsultanAI from "./pages/KonsultanAI";
 import Riwayat from "./pages/Riwayat";
+import Profil from "./pages/Profil";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -46,6 +47,7 @@ function AppRoutes() {
       <Route path="/konten-marketing" element={<ProtectedRoute><KontenMarketing /></ProtectedRoute>} />
       <Route path="/konsultan-ai" element={<ProtectedRoute><KonsultanAI /></ProtectedRoute>} />
       <Route path="/riwayat" element={<ProtectedRoute><Riwayat /></ProtectedRoute>} />
+      <Route path="/profil" element={<ProtectedRoute><Profil /></ProtectedRoute>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
