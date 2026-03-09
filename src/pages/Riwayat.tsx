@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { History, Trash2, Eye, Loader2 } from "lucide-react";
+import { History, Trash2, Eye, Loader2, Download } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import ReactMarkdown from "react-markdown";
@@ -56,6 +56,45 @@ export default function Riwayat() {
   const formatDate = (d: string) =>
     new Date(d).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
 
+  const handleExportPDF = async (r: AnalysisResult) => {
+    const html2pdf = (await import("html2pdf.js")).default;
+    const element = document.createElement("div");
+    // Render markdown to HTML
+    const tempDiv = document.createElement("div");
+    const { createRoot } = await import("react-dom/client");
+    const root = createRoot(tempDiv);
+    const { default: ReactMarkdownDyn } = await import("react-markdown");
+    await new Promise<void>((resolve) => {
+      root.render(<ReactMarkdownDyn>{r.result}</ReactMarkdownDyn>);
+      setTimeout(resolve, 100);
+    });
+
+    element.innerHTML = `
+      <div style="font-family: 'Helvetica', 'Arial', sans-serif; padding: 20px; color: #1a1a2e;">
+        <div style="border-bottom: 3px solid #2563eb; padding-bottom: 12px; margin-bottom: 20px;">
+          <h1 style="margin: 0; font-size: 22px; color: #2563eb;">School Strategy AI</h1>
+          <p style="margin: 4px 0 0; font-size: 11px; color: #6b7280;">Laporan Analisis</p>
+        </div>
+        <h2 style="font-size: 18px; margin-bottom: 4px;">${r.title}</h2>
+        <p style="font-size: 12px; color: #6b7280; margin-bottom: 16px;">Modul: ${r.module} • ${formatDate(r.created_at)}</p>
+        <div style="font-size: 13px; line-height: 1.7;">${tempDiv.innerHTML}</div>
+        <div style="border-top: 1px solid #e5e7eb; margin-top: 30px; padding-top: 10px; font-size: 10px; color: #9ca3af; text-align: center;">
+          Dibuat dengan School Strategy AI
+        </div>
+      </div>
+    `;
+    root.unmount();
+
+    html2pdf().set({
+      margin: [10, 10, 10, 10],
+      filename: `${r.title.replace(/\s+/g, "-").toLowerCase()}.pdf`,
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" as const },
+    }).from(element).save();
+    toast({ title: "PDF berhasil diunduh!" });
+  };
+
   return (
     <DashboardLayout>
       <div className="max-w-4xl mx-auto">
@@ -86,6 +125,9 @@ export default function Riwayat() {
                   <div className="flex gap-2 ml-4 shrink-0">
                     <Button variant="outline" size="sm" onClick={() => setSelected(r)}>
                       <Eye className="h-4 w-4" />
+                    </Button>
+                    <Button variant="outline" size="sm" onClick={() => handleExportPDF(r)}>
+                      <Download className="h-4 w-4" />
                     </Button>
                     <Button variant="outline" size="sm" onClick={() => handleDelete(r.id)}>
                       <Trash2 className="h-4 w-4 text-destructive" />
