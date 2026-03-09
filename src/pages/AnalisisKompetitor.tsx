@@ -52,7 +52,7 @@ Jawab dalam Bahasa Indonesia yang terstruktur.`
             <Button onClick={handleSubmit} disabled={isLoading || !nama || !lokasi} className="w-full">{isLoading ? "Menganalisis..." : "Analisis Kompetitor"}</Button>
           </CardContent>
         </Card>
-        <AIResultCard title="Hasil Analisis Kompetitor" content={result} isLoading={isLoading} />
+        <AIResultCard title="Hasil Analisis Kompetitor" content={result} isLoading={isLoading} module="Analisis Kompetitor" inputData={{ nama, lokasi, website }} />
       </div>
     </DashboardLayout>
   );

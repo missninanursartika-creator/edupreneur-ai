@@ -65,7 +65,7 @@ Jawab dalam Bahasa Indonesia.`
             <Button onClick={handleSubmit} disabled={isLoading || !lokasi || !target || !visi} className="w-full">{isLoading ? "Menganalisis..." : "Temukan Positioning"}</Button>
           </CardContent>
         </Card>
-        <AIResultCard title="Rekomendasi Positioning" content={result} isLoading={isLoading} />
+        <AIResultCard title="Rekomendasi Positioning" content={result} isLoading={isLoading} module="Positioning" inputData={{ lokasi, target, visi, fasilitas }} />
       </div>
     </DashboardLayout>
   );

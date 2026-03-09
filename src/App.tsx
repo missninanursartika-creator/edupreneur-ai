@@ -2,8 +2,10 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
+import Auth from "./pages/Auth";
 import RisetMarket from "./pages/RisetMarket";
 import AnalisisKompetitor from "./pages/AnalisisKompetitor";
 import Positioning from "./pages/Positioning";
@@ -15,32 +17,50 @@ import ModelBisnis from "./pages/ModelBisnis";
 import MarketingPPDB from "./pages/MarketingPPDB";
 import KontenMarketing from "./pages/KontenMarketing";
 import KonsultanAI from "./pages/KonsultanAI";
+import Riwayat from "./pages/Riwayat";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
+
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const { user, loading } = useAuth();
+  if (loading) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Memuat...</div>;
+  if (!user) return <Navigate to="/auth" replace />;
+  return <>{children}</>;
+}
+
+function AppRoutes() {
+  return (
+    <Routes>
+      <Route path="/auth" element={<Auth />} />
+      <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+      <Route path="/riset-market" element={<ProtectedRoute><RisetMarket /></ProtectedRoute>} />
+      <Route path="/analisis-kompetitor" element={<ProtectedRoute><AnalisisKompetitor /></ProtectedRoute>} />
+      <Route path="/positioning" element={<ProtectedRoute><Positioning /></ProtectedRoute>} />
+      <Route path="/program-unggulan" element={<ProtectedRoute><ProgramUnggulan /></ProtectedRoute>} />
+      <Route path="/value-proposition" element={<ProtectedRoute><ValueProposition /></ProtectedRoute>} />
+      <Route path="/generator-nama" element={<ProtectedRoute><GeneratorNama /></ProtectedRoute>} />
+      <Route path="/dna-sekolah" element={<ProtectedRoute><DnaSekolah /></ProtectedRoute>} />
+      <Route path="/model-bisnis" element={<ProtectedRoute><ModelBisnis /></ProtectedRoute>} />
+      <Route path="/marketing-ppdb" element={<ProtectedRoute><MarketingPPDB /></ProtectedRoute>} />
+      <Route path="/konten-marketing" element={<ProtectedRoute><KontenMarketing /></ProtectedRoute>} />
+      <Route path="/konsultan-ai" element={<ProtectedRoute><KonsultanAI /></ProtectedRoute>} />
+      <Route path="/riwayat" element={<ProtectedRoute><Riwayat /></ProtectedRoute>} />
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+}
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/riset-market" element={<RisetMarket />} />
-          <Route path="/analisis-kompetitor" element={<AnalisisKompetitor />} />
-          <Route path="/positioning" element={<Positioning />} />
-          <Route path="/program-unggulan" element={<ProgramUnggulan />} />
-          <Route path="/value-proposition" element={<ValueProposition />} />
-          <Route path="/generator-nama" element={<GeneratorNama />} />
-          <Route path="/dna-sekolah" element={<DnaSekolah />} />
-          <Route path="/model-bisnis" element={<ModelBisnis />} />
-          <Route path="/marketing-ppdb" element={<MarketingPPDB />} />
-          <Route path="/konten-marketing" element={<KontenMarketing />} />
-          <Route path="/konsultan-ai" element={<KonsultanAI />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <AuthProvider>
+        <BrowserRouter>
+          <AppRoutes />
+        </BrowserRouter>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

@@ -46,7 +46,7 @@ Jawab dalam Bahasa Indonesia.`
             <Button onClick={handleSubmit} disabled={isLoading || !konsep} className="w-full">{isLoading ? "Menggenerate..." : "Generate Konten"}</Button>
           </CardContent>
         </Card>
-        <AIResultCard title="Konten Marketing Sekolah" content={result} isLoading={isLoading} />
+        <AIResultCard title="Konten Marketing Sekolah" content={result} isLoading={isLoading} module="Konten Marketing" inputData={{ konsep, target }} />
       </div>
     </DashboardLayout>
   );

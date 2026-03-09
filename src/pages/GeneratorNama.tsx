@@ -48,7 +48,7 @@ Jawab dalam Bahasa Indonesia.`
             <Button onClick={handleSubmit} disabled={isLoading || !nilai || !konsep} className="w-full">{isLoading ? "Menggenerate..." : "Generate Nama"}</Button>
           </CardContent>
         </Card>
-        <AIResultCard title="Ide Nama Sekolah" content={result} isLoading={isLoading} />
+        <AIResultCard title="Ide Nama Sekolah" content={result} isLoading={isLoading} module="Generator Nama" inputData={{ nilai, konsep, lokasi }} />
       </div>
     </DashboardLayout>
   );

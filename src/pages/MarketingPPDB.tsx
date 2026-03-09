@@ -60,7 +60,7 @@ Jawab dalam Bahasa Indonesia.`
             <Button onClick={handleSubmit} disabled={isLoading || !jenjang || !target} className="w-full">{isLoading ? "Menganalisis..." : "Buat Strategi PPDB"}</Button>
           </CardContent>
         </Card>
-        <AIResultCard title="Strategi Marketing PPDB" content={result} isLoading={isLoading} />
+        <AIResultCard title="Strategi Marketing PPDB" content={result} isLoading={isLoading} module="Marketing PPDB" inputData={{ jenjang, target, kapasitas }} />
       </div>
     </DashboardLayout>
   );
