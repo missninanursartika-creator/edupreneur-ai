@@ -39,7 +39,7 @@ export default function Auth() {
           options: { data: { full_name: fullName } },
         });
         if (error) throw error;
-        toast({ title: "Akun berhasil dibuat!", description: "Anda langsung masuk." });
+        toast({ title: "Akun berhasil dibuat!", description: "Menunggu persetujuan admin." });
         navigate("/");
       }
     } catch (error: any) {
