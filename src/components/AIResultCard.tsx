@@ -61,7 +61,7 @@ export function AIResultCard({ title, content, isLoading, module, inputData }: A
               </Button>
             )}
             {saved && (
-              <Button variant="outline" size="sm" disabled className="text-green-600">
+              <Button variant="outline" size="sm" disabled className="text-primary">
                 ✓ Tersimpan
               </Button>
             )}
