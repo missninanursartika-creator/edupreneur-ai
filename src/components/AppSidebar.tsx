@@ -1,7 +1,7 @@
 import {
   LayoutDashboard, Search, Users, Target, BookOpen, Heart,
   Lightbulb, Dna, Briefcase, Megaphone, PenTool, MessageCircle,
-  History, LogOut
+  History, LogOut, UserCircle
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
