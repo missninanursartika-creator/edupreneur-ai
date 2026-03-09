@@ -47,6 +47,7 @@ function AppRoutes() {
       <Route path="/marketing-ppdb" element={<ProtectedRoute><MarketingPPDB /></ProtectedRoute>} />
       <Route path="/konten-marketing" element={<ProtectedRoute><KontenMarketing /></ProtectedRoute>} />
       <Route path="/konsultan-ai" element={<ProtectedRoute><KonsultanAI /></ProtectedRoute>} />
+      <Route path="/swot-analyzer" element={<ProtectedRoute><SwotAnalyzer /></ProtectedRoute>} />
       <Route path="/riwayat" element={<ProtectedRoute><Riwayat /></ProtectedRoute>} />
       <Route path="/profil" element={<ProtectedRoute><Profil /></ProtectedRoute>} />
       <Route path="*" element={<NotFound />} />
