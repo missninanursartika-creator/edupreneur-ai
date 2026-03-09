@@ -50,7 +50,7 @@ Jawab dalam Bahasa Indonesia.`
             <Button onClick={handleSubmit} disabled={isLoading || !jenjang || !konsep} className="w-full">{isLoading ? "Menganalisis..." : "Buat Model Bisnis"}</Button>
           </CardContent>
         </Card>
-        <AIResultCard title="Model Bisnis Sekolah" content={result} isLoading={isLoading} />
+        <AIResultCard title="Model Bisnis Sekolah" content={result} isLoading={isLoading} module="Model Bisnis" inputData={{ jenjang, konsep, kapasitas }} />
       </div>
     </DashboardLayout>
   );

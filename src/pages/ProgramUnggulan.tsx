@@ -60,7 +60,7 @@ Jawab detail dalam Bahasa Indonesia.`
             <Button onClick={handleSubmit} disabled={isLoading || !jenjang || !positioning || !target} className="w-full">{isLoading ? "Menganalisis..." : "Desain Program"}</Button>
           </CardContent>
         </Card>
-        <AIResultCard title="Program Unggulan Sekolah" content={result} isLoading={isLoading} />
+        <AIResultCard title="Program Unggulan Sekolah" content={result} isLoading={isLoading} module="Program Unggulan" inputData={{ jenjang, positioning, target }} />
       </div>
     </DashboardLayout>
   );

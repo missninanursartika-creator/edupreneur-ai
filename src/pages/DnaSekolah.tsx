@@ -50,7 +50,7 @@ Jawab dalam Bahasa Indonesia.`
             <Button onClick={handleSubmit} disabled={isLoading || !konsep} className="w-full">{isLoading ? "Mendesain..." : "Desain DNA Sekolah"}</Button>
           </CardContent>
         </Card>
-        <AIResultCard title="DNA Sekolah" content={result} isLoading={isLoading} />
+        <AIResultCard title="DNA Sekolah" content={result} isLoading={isLoading} module="DNA Sekolah" inputData={{ konsep, target, keunikan }} />
       </div>
     </DashboardLayout>
   );

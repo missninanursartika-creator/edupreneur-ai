@@ -50,7 +50,7 @@ Jawab dalam Bahasa Indonesia.`
             <Button onClick={handleSubmit} disabled={isLoading || !harapan || !kekhawatiran || !kebutuhan} className="w-full">{isLoading ? "Menganalisis..." : "Buat Value Proposition Canvas"}</Button>
           </CardContent>
         </Card>
-        <AIResultCard title="Value Proposition Canvas" content={result} isLoading={isLoading} />
+        <AIResultCard title="Value Proposition Canvas" content={result} isLoading={isLoading} module="Value Proposition" inputData={{ harapan, kekhawatiran, kebutuhan }} />
       </div>
     </DashboardLayout>
   );

@@ -91,7 +91,7 @@ Gunakan data dan pengetahuan terbaikmu. Berikan jawaban dalam Bahasa Indonesia y
           </CardContent>
         </Card>
 
-        <AIResultCard title="Hasil Riset Market" content={result} isLoading={isLoading} />
+        <AIResultCard title="Hasil Riset Market" content={result} isLoading={isLoading} module="Riset Market" inputData={{ kota, jenjang, target, kompetitor }} />
       </div>
     </DashboardLayout>
   );
