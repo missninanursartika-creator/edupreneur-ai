@@ -57,13 +57,13 @@ export default function AdminDashboard() {
   useEffect(() => {
     const checkAndLoad = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) { navigate("/admin"); return; }
+      if (!session) { navigate("/admin", { replace: true }); return; }
 
       const { data: isAdmin } = await supabase.rpc("has_role", {
         _user_id: session.user.id,
         _role: "admin",
       });
-      if (!isAdmin) { navigate("/admin"); return; }
+      if (!isAdmin) { navigate("/admin", { replace: true }); return; }
 
       loadData();
     };
