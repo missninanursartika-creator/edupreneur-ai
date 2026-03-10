@@ -33,25 +33,34 @@ export default function AdminAuth() {
     setLoading(true);
 
     try {
+      // Sign out first to avoid stale session conflicts
+      await supabase.auth.signOut();
+      
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
 
-      const { data: isAdmin } = await supabase.rpc("has_role", {
+      console.log("[AdminAuth] Login success, checking role for:", data.user.id);
+
+      const { data: isAdmin, error: roleError } = await supabase.rpc("has_role", {
         _user_id: data.user.id,
         _role: "admin",
       });
 
+      console.log("[AdminAuth] has_role result:", isAdmin, "error:", roleError);
+
       if (!isAdmin) {
         await supabase.auth.signOut();
         toast({ title: "Akses ditolak", description: "Anda bukan admin.", variant: "destructive" });
+        setLoading(false);
         return;
       }
 
       toast({ title: "Berhasil masuk sebagai Admin" });
-      navigate("/admin/dashboard");
+      // Use window.location for a full navigation to avoid race conditions
+      window.location.href = "/admin/dashboard";
     } catch (error: any) {
+      console.error("[AdminAuth] Error:", error);
       toast({ title: "Error", description: error.message, variant: "destructive" });
-    } finally {
       setLoading(false);
     }
   };
