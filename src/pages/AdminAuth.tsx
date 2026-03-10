@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -13,16 +13,18 @@ export default function AdminAuth() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const isSubmitting = useRef(false);
 
   useEffect(() => {
     const checkAdmin = async () => {
+      if (isSubmitting.current) return;
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
         const { data } = await supabase.rpc("has_role", {
           _user_id: session.user.id,
           _role: "admin",
         });
-        if (data) navigate("/admin/dashboard");
+        if (data) navigate("/admin/dashboard", { replace: true });
       }
     };
     checkAdmin();
@@ -31,37 +33,34 @@ export default function AdminAuth() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    isSubmitting.current = true;
 
     try {
-      // Sign out first to avoid stale session conflicts
-      await supabase.auth.signOut();
-      
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
-
-      console.log("[AdminAuth] Login success, checking role for:", data.user.id);
 
       const { data: isAdmin, error: roleError } = await supabase.rpc("has_role", {
         _user_id: data.user.id,
         _role: "admin",
       });
 
-      console.log("[AdminAuth] has_role result:", isAdmin, "error:", roleError);
+      if (roleError) throw roleError;
 
       if (!isAdmin) {
         await supabase.auth.signOut();
         toast({ title: "Akses ditolak", description: "Anda bukan admin.", variant: "destructive" });
         setLoading(false);
+        isSubmitting.current = false;
         return;
       }
 
       toast({ title: "Berhasil masuk sebagai Admin" });
-      // Use window.location for a full navigation to avoid race conditions
-      window.location.href = "/admin/dashboard";
+      navigate("/admin/dashboard", { replace: true });
     } catch (error: any) {
       console.error("[AdminAuth] Error:", error);
       toast({ title: "Error", description: error.message, variant: "destructive" });
       setLoading(false);
+      isSubmitting.current = false;
     }
   };
 
@@ -91,6 +90,11 @@ export default function AdminAuth() {
               {loading ? "Memproses..." : "Masuk Admin"}
             </Button>
           </form>
+          <p className="text-center text-sm text-muted-foreground mt-4">
+            <a href="/auth" className="text-primary font-medium hover:underline">
+              Kembali ke Login User
+            </a>
+          </p>
         </CardContent>
       </Card>
     </div>

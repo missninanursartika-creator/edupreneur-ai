@@ -63,7 +63,7 @@ export default function AdminDashboard() {
         _user_id: session.user.id,
         _role: "admin",
       });
-      if (!isAdmin) { navigate("/admin"); return; }
+      if (!isAdmin) { navigate("/admin", { replace: true }); return; }
 
       loadData();
     };
