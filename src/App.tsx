@@ -39,7 +39,7 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/auth" element={<Auth />} />
-      <Route path="/admin" element={<AdminAuth />} />
+      <Route path="/admin" element={<Navigate to="/auth" replace />} />
       <Route path="/admin/dashboard" element={<AdminDashboard />} />
       <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
       <Route path="/riset-market" element={<ProtectedRoute><RisetMarket /></ProtectedRoute>} />
