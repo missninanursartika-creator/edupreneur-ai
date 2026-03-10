@@ -135,9 +135,9 @@ export default function Auth() {
                   </button>
                 </p>
                 <p>
-                  <button onClick={() => switchMode("admin")} className="text-muted-foreground hover:text-primary hover:underline">
+                  <a href="/admin" className="text-muted-foreground hover:text-primary hover:underline">
                     Login sebagai Admin
-                  </button>
+                  </a>
                 </p>
               </>
             )}
