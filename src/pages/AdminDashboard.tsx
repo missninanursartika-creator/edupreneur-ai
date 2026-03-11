@@ -57,18 +57,18 @@ export default function AdminDashboard() {
   useEffect(() => {
     const checkAndLoad = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (!session) { navigate("/admin", { replace: true }); return; }
+      if (!session) { window.location.href = "/admin"; return; }
 
       const { data: isAdmin } = await supabase.rpc("has_role", {
         _user_id: session.user.id,
         _role: "admin",
       });
-      if (!isAdmin) { navigate("/admin", { replace: true }); return; }
+      if (!isAdmin) { window.location.href = "/admin"; return; }
 
       loadData();
     };
     checkAndLoad();
-  }, [navigate, loadData]);
+  }, [loadData]);
 
   const handleApproval = async (userId: string, approved: boolean) => {
     try {
