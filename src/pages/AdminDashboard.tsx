@@ -1,5 +1,4 @@
 import { useEffect, useState, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -32,7 +31,6 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState<UserRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"overview" | "users">("overview");
-  const navigate = useNavigate();
 
   const loadData = useCallback(async () => {
     try {
@@ -47,27 +45,49 @@ export default function AdminDashboard() {
       setStats(statsRes.data as unknown as AdminStats);
       setUsers(usersRes.data as unknown as UserRow[]);
     } catch (error: any) {
+      console.error("[AdminDashboard] loadData error:", error);
       toast({ title: "Error", description: error.message, variant: "destructive" });
-      navigate("/admin");
     } finally {
       setLoading(false);
     }
-  }, [navigate]);
+  }, []);
 
   useEffect(() => {
+    let cancelled = false;
+
     const checkAndLoad = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) { window.location.href = "/admin"; return; }
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          window.location.href = "/admin";
+          return;
+        }
 
-      const { data: isAdmin } = await supabase.rpc("has_role", {
-        _user_id: session.user.id,
-        _role: "admin",
-      });
-      if (!isAdmin) { window.location.href = "/admin"; return; }
+        const { data: isAdmin } = await supabase.rpc("has_role", {
+          _user_id: session.user.id,
+          _role: "admin",
+        });
 
-      loadData();
+        if (!isAdmin) {
+          window.location.href = "/admin";
+          return;
+        }
+
+        if (!cancelled) {
+          await loadData();
+        }
+      } catch (err) {
+        console.error("[AdminDashboard] checkAndLoad error:", err);
+        if (!cancelled) {
+          setLoading(false);
+          window.location.href = "/admin";
+        }
+      }
     };
+
     checkAndLoad();
+
+    return () => { cancelled = true; };
   }, [loadData]);
 
   const handleApproval = async (userId: string, approved: boolean) => {
@@ -98,7 +118,7 @@ export default function AdminDashboard() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    navigate("/admin");
+    window.location.href = "/admin";
   };
 
   if (loading) {
@@ -111,25 +131,16 @@ export default function AdminDashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
       <header className="border-b bg-card px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Shield className="h-6 w-6 text-primary" />
           <h1 className="text-xl font-bold text-foreground">Admin Dashboard</h1>
         </div>
         <div className="flex items-center gap-2">
-          <Button
-            variant={activeTab === "overview" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setActiveTab("overview")}
-          >
+          <Button variant={activeTab === "overview" ? "default" : "outline"} size="sm" onClick={() => setActiveTab("overview")}>
             <BarChart3 className="h-4 w-4 mr-1" /> Overview
           </Button>
-          <Button
-            variant={activeTab === "users" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setActiveTab("users")}
-          >
+          <Button variant={activeTab === "users" ? "default" : "outline"} size="sm" onClick={() => setActiveTab("users")}>
             <Users className="h-4 w-4 mr-1" /> Users
           </Button>
           <Button variant="ghost" size="sm" onClick={handleLogout}>
@@ -141,60 +152,16 @@ export default function AdminDashboard() {
       <main className="p-6 max-w-7xl mx-auto space-y-6">
         {activeTab === "overview" && stats && (
           <>
-            {/* Stat Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-muted-foreground">Total Users</p>
-                      <p className="text-3xl font-bold text-foreground">{stats.total_users}</p>
-                    </div>
-                    <Users className="h-10 w-10 text-primary/30" />
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-muted-foreground">Pending</p>
-                      <p className="text-3xl font-bold text-destructive">{stats.pending_users}</p>
-                    </div>
-                    <UserX className="h-10 w-10 text-destructive/30" />
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-muted-foreground">Approved</p>
-                      <p className="text-3xl font-bold text-foreground">{stats.approved_users}</p>
-                    </div>
-                    <UserCheck className="h-10 w-10 text-primary/30" />
-                  </div>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardContent className="pt-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-muted-foreground">Total Analisis</p>
-                      <p className="text-3xl font-bold text-foreground">{stats.total_analyses}</p>
-                    </div>
-                    <Activity className="h-10 w-10 text-primary/30" />
-                  </div>
-                </CardContent>
-              </Card>
+              <Card><CardContent className="pt-6"><div className="flex items-center justify-between"><div><p className="text-sm text-muted-foreground">Total Users</p><p className="text-3xl font-bold text-foreground">{stats.total_users}</p></div><Users className="h-10 w-10 text-primary/30" /></div></CardContent></Card>
+              <Card><CardContent className="pt-6"><div className="flex items-center justify-between"><div><p className="text-sm text-muted-foreground">Pending</p><p className="text-3xl font-bold text-destructive">{stats.pending_users}</p></div><UserX className="h-10 w-10 text-destructive/30" /></div></CardContent></Card>
+              <Card><CardContent className="pt-6"><div className="flex items-center justify-between"><div><p className="text-sm text-muted-foreground">Approved</p><p className="text-3xl font-bold text-foreground">{stats.approved_users}</p></div><UserCheck className="h-10 w-10 text-primary/30" /></div></CardContent></Card>
+              <Card><CardContent className="pt-6"><div className="flex items-center justify-between"><div><p className="text-sm text-muted-foreground">Total Analisis</p><p className="text-3xl font-bold text-foreground">{stats.total_analyses}</p></div><Activity className="h-10 w-10 text-primary/30" /></div></CardContent></Card>
             </div>
 
-            {/* Charts */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Penggunaan per Modul</CardTitle>
-                </CardHeader>
+                <CardHeader><CardTitle className="text-lg">Penggunaan per Modul</CardTitle></CardHeader>
                 <CardContent>
                   {stats.analyses_by_module.length > 0 ? (
                     <ResponsiveContainer width="100%" height={300}>
@@ -212,9 +179,7 @@ export default function AdminDashboard() {
                 </CardContent>
               </Card>
               <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">Aktivitas Harian (30 hari)</CardTitle>
-                </CardHeader>
+                <CardHeader><CardTitle className="text-lg">Aktivitas Harian (30 hari)</CardTitle></CardHeader>
                 <CardContent>
                   {stats.daily_activity.length > 0 ? (
                     <ResponsiveContainer width="100%" height={300}>
@@ -237,9 +202,7 @@ export default function AdminDashboard() {
 
         {activeTab === "users" && (
           <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Manajemen User</CardTitle>
-            </CardHeader>
+            <CardHeader><CardTitle className="text-lg">Manajemen User</CardTitle></CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>

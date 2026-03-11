@@ -27,56 +27,48 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let mounted = true;
 
-    const checkApproval = async (userId: string) => {
-      try {
-        const { data, error } = await supabase.rpc("is_user_approved", { _user_id: userId });
-        if (error) {
-          console.error("[AuthContext] approval check error:", error);
-          return false;
-        }
-        return !!data;
-      } catch (err) {
-        console.error("[AuthContext] approval check exception:", err);
-        return false;
-      }
-    };
-
-    const handleSession = async (newSession: Session | null) => {
+    // Get initial session first
+    supabase.auth.getSession().then(async ({ data: { session: initialSession } }) => {
       if (!mounted) return;
-      
-      setSession(newSession);
-      setUser(newSession?.user ?? null);
 
-      if (newSession?.user) {
-        const approved = await checkApproval(newSession.user.id);
-        if (mounted) {
-          setIsApproved(approved);
-          setLoading(false);
+      setSession(initialSession);
+      setUser(initialSession?.user ?? null);
+
+      if (initialSession?.user) {
+        try {
+          const { data } = await supabase.rpc("is_user_approved", { _user_id: initialSession.user.id });
+          if (mounted) setIsApproved(!!data);
+        } catch (err) {
+          console.error("[AuthContext] approval check error:", err);
         }
-      } else {
-        setIsApproved(false);
-        setLoading(false);
       }
-    };
 
-    // Set up auth listener - this handles INITIAL_SESSION too
+      if (mounted) setLoading(false);
+    });
+
+    // Then listen for changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (_event, newSession) => {
-        await handleSession(newSession);
+        if (!mounted) return;
+
+        setSession(newSession);
+        setUser(newSession?.user ?? null);
+
+        if (newSession?.user) {
+          try {
+            const { data } = await supabase.rpc("is_user_approved", { _user_id: newSession.user.id });
+            if (mounted) setIsApproved(!!data);
+          } catch (err) {
+            console.error("[AuthContext] approval check error:", err);
+          }
+        } else {
+          setIsApproved(false);
+        }
       }
     );
 
-    // Fallback timeout to prevent infinite loading
-    const timeout = setTimeout(() => {
-      if (mounted && loading) {
-        console.warn("[AuthContext] Loading timeout reached, forcing load complete");
-        setLoading(false);
-      }
-    }, 5000);
-
     return () => {
       mounted = false;
-      clearTimeout(timeout);
       subscription.unsubscribe();
     };
   }, []);
