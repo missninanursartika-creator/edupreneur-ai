@@ -47,7 +47,7 @@ export default function Auth() {
           });
         } else {
           toast({ title: "Akun berhasil dibuat!", description: "Menunggu persetujuan admin." });
-          navigate("/");
+          navigate("/dashboard");
         }
       }
     } catch (error: any) {
