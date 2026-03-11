@@ -18,7 +18,7 @@ export default function Auth() {
   const { user } = useAuth();
 
   useEffect(() => {
-    if (user) navigate("/");
+    if (user) navigate("/dashboard");
   }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -30,7 +30,7 @@ export default function Auth() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast({ title: "Berhasil masuk!" });
-        navigate("/");
+        navigate("/dashboard");
       } else {
         const { data, error } = await supabase.auth.signUp({
           email,
@@ -47,7 +47,7 @@ export default function Auth() {
           });
         } else {
           toast({ title: "Akun berhasil dibuat!", description: "Menunggu persetujuan admin." });
-          navigate("/");
+          navigate("/dashboard");
         }
       }
     } catch (error: any) {

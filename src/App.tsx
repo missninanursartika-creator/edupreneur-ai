@@ -30,18 +30,26 @@ const queryClient = new QueryClient();
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading, isApproved } = useAuth();
   if (loading) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Memuat...</div>;
-  if (!user) return <Navigate to="/auth" replace />;
+  if (!user) return <Navigate to="/" replace />;
   if (!isApproved) return <PendingApproval />;
+  return <>{children}</>;
+}
+
+function PublicRoute({ children }: { children: React.ReactNode }) {
+  const { user, loading, isApproved } = useAuth();
+  if (loading) return <div className="min-h-screen flex items-center justify-center text-muted-foreground">Memuat...</div>;
+  if (user && isApproved) return <Navigate to="/dashboard" replace />;
   return <>{children}</>;
 }
 
 function AppRoutes() {
   return (
     <Routes>
-      <Route path="/auth" element={<Auth />} />
+      <Route path="/" element={<PublicRoute><Auth /></PublicRoute>} />
+      <Route path="/auth" element={<PublicRoute><Auth /></PublicRoute>} />
       <Route path="/admin" element={<AdminAuth />} />
       <Route path="/admin/dashboard" element={<AdminDashboard />} />
-      <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+      <Route path="/dashboard" element={<ProtectedRoute><Index /></ProtectedRoute>} />
       <Route path="/riset-market" element={<ProtectedRoute><RisetMarket /></ProtectedRoute>} />
       <Route path="/analisis-kompetitor" element={<ProtectedRoute><AnalisisKompetitor /></ProtectedRoute>} />
       <Route path="/positioning" element={<ProtectedRoute><Positioning /></ProtectedRoute>} />
