@@ -30,7 +30,7 @@ export default function Auth() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast({ title: "Berhasil masuk!" });
-        navigate("/");
+        navigate("/dashboard");
       } else {
         const { data, error } = await supabase.auth.signUp({
           email,
