@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
-import { useAuth } from "@/contexts/AuthContext";
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
@@ -15,11 +14,6 @@ export default function Auth() {
   const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { user } = useAuth();
-
-  useEffect(() => {
-    if (user) navigate("/dashboard");
-  }, [user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,7 +24,7 @@ export default function Auth() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
         toast({ title: "Berhasil masuk!" });
-        navigate("/dashboard");
+        navigate("/dashboard", { replace: true });
       } else {
         const { data, error } = await supabase.auth.signUp({
           email,
@@ -38,16 +32,14 @@ export default function Auth() {
           options: { data: { full_name: fullName } },
         });
         if (error) throw error;
-        
-        // Check if email confirmation is needed
+
         if (data.user && !data.session) {
-          toast({ 
-            title: "Cek email Anda!", 
-            description: "Kami telah mengirim link verifikasi ke email Anda. Silakan verifikasi email terlebih dahulu, lalu tunggu persetujuan admin." 
+          toast({
+            title: "Cek email Anda!",
+            description: "Kami telah mengirim link verifikasi ke email Anda. Silakan verifikasi email terlebih dahulu, lalu tunggu persetujuan admin.",
           });
         } else {
           toast({ title: "Akun berhasil dibuat!", description: "Menunggu persetujuan admin." });
-          navigate("/dashboard");
         }
       }
     } catch (error: any) {
