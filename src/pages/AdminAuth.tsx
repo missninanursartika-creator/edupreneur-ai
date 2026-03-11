@@ -1,5 +1,4 @@
-import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,30 +11,38 @@ export default function AdminAuth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-  const isSubmitting = useRef(false);
+  const [checkingSession, setCheckingSession] = useState(true);
 
   useEffect(() => {
-    const checkAdmin = async () => {
-      if (isSubmitting.current) return;
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        const { data } = await supabase.rpc("has_role", {
-          _user_id: session.user.id,
-          _role: "admin",
-        });
-        if (data) navigate("/admin/dashboard", { replace: true });
+    const checkExistingAdmin = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          const { data } = await supabase.rpc("has_role", {
+            _user_id: session.user.id,
+            _role: "admin",
+          });
+          if (data) {
+            window.location.href = "/admin/dashboard";
+            return;
+          }
+        }
+      } catch (err) {
+        console.error("[AdminAuth] session check error:", err);
       }
+      setCheckingSession(false);
     };
-    checkAdmin();
-  }, [navigate]);
+    checkExistingAdmin();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    isSubmitting.current = true;
 
     try {
+      // Sign out any existing session first
+      await supabase.auth.signOut();
+      
       const { data, error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
 
@@ -50,19 +57,25 @@ export default function AdminAuth() {
         await supabase.auth.signOut();
         toast({ title: "Akses ditolak", description: "Anda bukan admin.", variant: "destructive" });
         setLoading(false);
-        isSubmitting.current = false;
         return;
       }
 
       toast({ title: "Berhasil masuk sebagai Admin" });
-      navigate("/admin/dashboard", { replace: true });
+      // Use full page reload to avoid AuthContext race conditions
+      window.location.href = "/admin/dashboard";
     } catch (error: any) {
-      console.error("[AdminAuth] Error:", error);
       toast({ title: "Error", description: error.message, variant: "destructive" });
       setLoading(false);
-      isSubmitting.current = false;
     }
   };
+
+  if (checkingSession) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-muted-foreground">
+        Memeriksa sesi...
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
