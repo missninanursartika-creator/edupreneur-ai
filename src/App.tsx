@@ -45,10 +45,11 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
 function AppRoutes() {
   return (
     <Routes>
-      <Route path="/auth" element={<Auth />} />
+      <Route path="/" element={<PublicRoute><Auth /></PublicRoute>} />
+      <Route path="/auth" element={<PublicRoute><Auth /></PublicRoute>} />
       <Route path="/admin" element={<AdminAuth />} />
       <Route path="/admin/dashboard" element={<AdminDashboard />} />
-      <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+      <Route path="/dashboard" element={<ProtectedRoute><Index /></ProtectedRoute>} />
       <Route path="/riset-market" element={<ProtectedRoute><RisetMarket /></ProtectedRoute>} />
       <Route path="/analisis-kompetitor" element={<ProtectedRoute><AnalisisKompetitor /></ProtectedRoute>} />
       <Route path="/positioning" element={<ProtectedRoute><Positioning /></ProtectedRoute>} />
