@@ -18,6 +18,21 @@ const AuthContext = createContext<AuthContextType>({
   signOut: async () => {},
 });
 
+const withTimeout = async <T,>(promise: Promise<T>, timeoutMs: number, timeoutMessage: string): Promise<T> => {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
+  try {
+    return await Promise.race([
+      promise,
+      new Promise<T>((_, reject) => {
+        timeoutId = setTimeout(() => reject(new Error(timeoutMessage)), timeoutMs);
+      }),
+    ]);
+  } finally {
+    if (timeoutId) clearTimeout(timeoutId);
+  }
+};
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -27,45 +42,69 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let mounted = true;
 
-    // Get initial session first
-    supabase.auth.getSession().then(async ({ data: { session: initialSession } }) => {
+    const checkApproval = async (userId: string) => {
+      try {
+        const { data } = await withTimeout(
+          supabase.rpc("is_user_approved", { _user_id: userId }),
+          5000,
+          "Approval check timeout"
+        );
+        return !!data;
+      } catch (err) {
+        console.error("[AuthContext] approval check error:", err);
+        return false;
+      }
+    };
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, newSession) => {
       if (!mounted) return;
 
-      setSession(initialSession);
-      setUser(initialSession?.user ?? null);
+      setSession(newSession);
+      setUser(newSession?.user ?? null);
 
-      if (initialSession?.user) {
-        try {
-          const { data } = await supabase.rpc("is_user_approved", { _user_id: initialSession.user.id });
-          if (mounted) setIsApproved(!!data);
-        } catch (err) {
-          console.error("[AuthContext] approval check error:", err);
-        }
+      if (!newSession?.user) {
+        setIsApproved(false);
+        return;
       }
 
-      if (mounted) setLoading(false);
+      void checkApproval(newSession.user.id).then((approved) => {
+        if (mounted) setIsApproved(approved);
+      });
     });
 
-    // Then listen for changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, newSession) => {
+    const initializeAuth = async () => {
+      const hardTimeout = setTimeout(() => {
+        if (mounted) setLoading(false);
+      }, 6000);
+
+      try {
+        const { data: { session: initialSession } } = await withTimeout(
+          supabase.auth.getSession(),
+          5000,
+          "Session check timeout"
+        );
+
         if (!mounted) return;
 
-        setSession(newSession);
-        setUser(newSession?.user ?? null);
+        setSession(initialSession ?? null);
+        setUser(initialSession?.user ?? null);
 
-        if (newSession?.user) {
-          try {
-            const { data } = await supabase.rpc("is_user_approved", { _user_id: newSession.user.id });
-            if (mounted) setIsApproved(!!data);
-          } catch (err) {
-            console.error("[AuthContext] approval check error:", err);
-          }
+        if (initialSession?.user) {
+          const approved = await checkApproval(initialSession.user.id);
+          if (mounted) setIsApproved(approved);
         } else {
           setIsApproved(false);
         }
+      } catch (err) {
+        console.error("[AuthContext] init error:", err);
+        if (mounted) setIsApproved(false);
+      } finally {
+        clearTimeout(hardTimeout);
+        if (mounted) setLoading(false);
       }
-    );
+    };
+
+    void initializeAuth();
 
     return () => {
       mounted = false;
