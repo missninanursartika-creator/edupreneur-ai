@@ -14,6 +14,8 @@ export default function AdminAuth() {
   const [checkingSession, setCheckingSession] = useState(true);
 
   useEffect(() => {
+    const timeout = setTimeout(() => setCheckingSession(false), 3000);
+    
     const checkExistingAdmin = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
@@ -23,6 +25,7 @@ export default function AdminAuth() {
             _role: "admin",
           });
           if (data) {
+            clearTimeout(timeout);
             window.location.href = "/admin/dashboard";
             return;
           }
@@ -30,9 +33,12 @@ export default function AdminAuth() {
       } catch (err) {
         console.error("[AdminAuth] session check error:", err);
       }
+      clearTimeout(timeout);
       setCheckingSession(false);
     };
     checkExistingAdmin();
+    
+    return () => clearTimeout(timeout);
   }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
