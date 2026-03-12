@@ -32,13 +32,13 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"overview" | "users">("overview");
 
-  const withTimeout = async <T,>(promise: Promise<T>, timeoutMs: number, errorMessage: string): Promise<T> => {
+  const withTimeout = async (promiseLike: PromiseLike<any>, timeoutMs: number, errorMessage: string) => {
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
     try {
       return await Promise.race([
-        promise,
-        new Promise<T>((_, reject) => {
+        Promise.resolve(promiseLike),
+        new Promise((_, reject) => {
           timeoutId = setTimeout(() => reject(new Error(errorMessage)), timeoutMs);
         }),
       ]);
