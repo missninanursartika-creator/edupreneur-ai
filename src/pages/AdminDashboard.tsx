@@ -32,18 +32,64 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"overview" | "users">("overview");
 
-  const loadData = useCallback(async () => {
+  const withTimeout = async <T,>(promise: Promise<T>, timeoutMs: number, errorMessage: string): Promise<T> => {
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
     try {
-      const [statsRes, usersRes] = await Promise.all([
-        supabase.rpc("get_admin_stats"),
-        supabase.rpc("get_all_users"),
+      return await Promise.race([
+        promise,
+        new Promise<T>((_, reject) => {
+          timeoutId = setTimeout(() => reject(new Error(errorMessage)), timeoutMs);
+        }),
       ]);
+    } finally {
+      if (timeoutId) clearTimeout(timeoutId);
+    }
+  };
+
+  const loadData = useCallback(async () => {
+    setLoading(true);
+
+    try {
+      const {
+        data: { session },
+        error: sessionError,
+      } = await withTimeout(
+        supabase.auth.getSession(),
+        5000,
+        "Pengecekan sesi admin timeout. Silakan refresh halaman."
+      );
+
+      if (sessionError || !session) {
+        window.location.href = "/admin";
+        return;
+      }
+
+      const { data: isAdmin, error: roleError } = await withTimeout(
+        supabase.rpc("has_role", {
+          _user_id: session.user.id,
+          _role: "admin",
+        }),
+        5000,
+        "Verifikasi akses admin timeout. Silakan coba lagi."
+      );
+
+      if (roleError || !isAdmin) {
+        window.location.href = "/admin";
+        return;
+      }
+
+      const [statsRes, usersRes] = await withTimeout(
+        Promise.all([supabase.rpc("get_admin_stats"), supabase.rpc("get_all_users")]),
+        10000,
+        "Memuat data dashboard terlalu lama. Silakan refresh halaman."
+      );
 
       if (statsRes.error) throw statsRes.error;
       if (usersRes.error) throw usersRes.error;
 
-      setStats(statsRes.data as unknown as AdminStats);
-      setUsers(usersRes.data as unknown as UserRow[]);
+      setStats((statsRes.data as unknown as AdminStats) ?? null);
+      setUsers(Array.isArray(usersRes.data) ? (usersRes.data as unknown as UserRow[]) : []);
     } catch (error: any) {
       console.error("[AdminDashboard] loadData error:", error);
       toast({ title: "Error", description: error.message, variant: "destructive" });
@@ -53,41 +99,7 @@ export default function AdminDashboard() {
   }, []);
 
   useEffect(() => {
-    let cancelled = false;
-
-    const checkAndLoad = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (!session) {
-          window.location.href = "/admin";
-          return;
-        }
-
-        const { data: isAdmin } = await supabase.rpc("has_role", {
-          _user_id: session.user.id,
-          _role: "admin",
-        });
-
-        if (!isAdmin) {
-          window.location.href = "/admin";
-          return;
-        }
-
-        if (!cancelled) {
-          await loadData();
-        }
-      } catch (err) {
-        console.error("[AdminDashboard] checkAndLoad error:", err);
-        if (!cancelled) {
-          setLoading(false);
-          window.location.href = "/admin";
-        }
-      }
-    };
-
-    checkAndLoad();
-
-    return () => { cancelled = true; };
+    void loadData();
   }, [loadData]);
 
   const handleApproval = async (userId: string, approved: boolean) => {
