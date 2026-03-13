@@ -23,6 +23,7 @@ import KonsultanAI from "./pages/KonsultanAI";
 import SwotAnalyzer from "./pages/SwotAnalyzer";
 import Riwayat from "./pages/Riwayat";
 import Profil from "./pages/Profil";
+import AnalisisJatidiri from "./pages/AnalisisJatidiri";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
