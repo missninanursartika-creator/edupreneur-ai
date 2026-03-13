@@ -24,6 +24,7 @@ import SwotAnalyzer from "./pages/SwotAnalyzer";
 import Riwayat from "./pages/Riwayat";
 import Profil from "./pages/Profil";
 import AnalisisJatidiri from "./pages/AnalisisJatidiri";
+import IdeJatidiriAI from "./pages/IdeJatidiriAI";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -60,6 +61,7 @@ function AppRoutes() {
       <Route path="/dna-sekolah" element={<ProtectedRoute><DnaSekolah /></ProtectedRoute>} />
       <Route path="/model-bisnis" element={<ProtectedRoute><ModelBisnis /></ProtectedRoute>} />
       <Route path="/analisis-jatidiri" element={<ProtectedRoute><AnalisisJatidiri /></ProtectedRoute>} />
+      <Route path="/ide-jatidiri-ai" element={<ProtectedRoute><IdeJatidiriAI /></ProtectedRoute>} />
       <Route path="/marketing-ppdb" element={<ProtectedRoute><MarketingPPDB /></ProtectedRoute>} />
       <Route path="/konten-marketing" element={<ProtectedRoute><KontenMarketing /></ProtectedRoute>} />
       <Route path="/konsultan-ai" element={<ProtectedRoute><KonsultanAI /></ProtectedRoute>} />

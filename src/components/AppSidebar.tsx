@@ -1,7 +1,7 @@
 import {
   LayoutDashboard, Search, Users, Target, BookOpen, Heart,
   Lightbulb, Dna, Briefcase, Megaphone, PenTool, MessageCircle,
-  BarChart3, History, LogOut, UserCircle, Fingerprint
+  BarChart3, History, LogOut, UserCircle, Fingerprint, Sparkles
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -23,6 +23,7 @@ const menuItems = [
   { title: "Desain DNA Sekolah", url: "/dna-sekolah", icon: Dna },
   { title: "Model Bisnis Sekolah", url: "/model-bisnis", icon: Briefcase },
   { title: "Analisis Jatidiri", url: "/analisis-jatidiri", icon: Fingerprint },
+  { title: "Ide Jatidiri AI", url: "/ide-jatidiri-ai", icon: Sparkles },
   { title: "Strategi Marketing PPDB", url: "/marketing-ppdb", icon: Megaphone },
   { title: "Konten Marketing", url: "/konten-marketing", icon: PenTool },
   { title: "AI Konsultan Sekolah", url: "/konsultan-ai", icon: MessageCircle },
