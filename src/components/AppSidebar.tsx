@@ -22,6 +22,7 @@ const menuItems = [
   { title: "Generator Nama Sekolah", url: "/generator-nama", icon: Lightbulb },
   { title: "Desain DNA Sekolah", url: "/dna-sekolah", icon: Dna },
   { title: "Model Bisnis Sekolah", url: "/model-bisnis", icon: Briefcase },
+  { title: "Analisis Jatidiri", url: "/analisis-jatidiri", icon: Fingerprint },
   { title: "Strategi Marketing PPDB", url: "/marketing-ppdb", icon: Megaphone },
   { title: "Konten Marketing", url: "/konten-marketing", icon: PenTool },
   { title: "AI Konsultan Sekolah", url: "/konsultan-ai", icon: MessageCircle },
