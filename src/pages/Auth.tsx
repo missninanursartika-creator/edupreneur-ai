@@ -62,10 +62,16 @@ export default function Auth() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
-              <div>
-                <Label>Nama Lengkap</Label>
-                <Input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Nama lengkap Anda" required />
-              </div>
+              <>
+                <div>
+                  <Label>Nama Lengkap</Label>
+                  <Input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Nama lengkap Anda" required />
+                </div>
+                <div>
+                  <Label>Nama Sekolah</Label>
+                  <Input value={schoolName} onChange={(e) => setSchoolName(e.target.value)} placeholder="cth: SDIT Al-Fatih atau SMP Negeri 1" required />
+                </div>
+              </>
             )}
             <div>
               <Label>Email</Label>
