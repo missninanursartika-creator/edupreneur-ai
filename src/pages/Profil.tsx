@@ -156,6 +156,14 @@ export default function Profil() {
                 placeholder="Masukkan nama lengkap"
               />
             </div>
+            <div>
+              <Label>Nama Sekolah</Label>
+              <Input
+                value={schoolName}
+                onChange={(e) => setSchoolName(e.target.value)}
+                placeholder="cth: SDIT Al-Fatih atau SMP Negeri 1"
+              />
+            </div>
             <Button onClick={handleSave} disabled={saving} className="w-full">
               {saving ? "Menyimpan..." : "Simpan Perubahan"}
             </Button>

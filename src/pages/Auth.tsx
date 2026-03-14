@@ -88,7 +88,7 @@ export default function Auth() {
           <div className="text-center text-sm text-muted-foreground mt-4 space-y-2">
             <p>
               {isLogin ? "Belum punya akun?" : "Sudah punya akun?"}{" "}
-              <button onClick={() => { setIsLogin(!isLogin); setEmail(""); setPassword(""); setFullName(""); }} className="text-primary font-medium hover:underline">
+              <button onClick={() => { setIsLogin(!isLogin); setEmail(""); setPassword(""); setFullName(""); setSchoolName(""); }} className="text-primary font-medium hover:underline">
                 {isLogin ? "Daftar" : "Masuk"}
               </button>
             </p>
