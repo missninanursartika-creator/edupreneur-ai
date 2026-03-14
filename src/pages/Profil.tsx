@@ -24,12 +24,13 @@ export default function Profil() {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("full_name, avatar_url")
+      .select("full_name, avatar_url, school_name")
       .eq("id", user.id)
       .single()
       .then(({ data }) => {
         if (data) {
           setFullName(data.full_name || "");
+          setSchoolName((data as any).school_name || "");
           setAvatarUrl(data.avatar_url);
         }
         setLoading(false);
