@@ -42,7 +42,7 @@ export default function Profil() {
     setSaving(true);
     const { error } = await supabase
       .from("profiles")
-      .update({ full_name: fullName, updated_at: new Date().toISOString() })
+      .update({ full_name: fullName, school_name: schoolName, updated_at: new Date().toISOString() } as any)
       .eq("id", user.id);
     setSaving(false);
     if (error) {
