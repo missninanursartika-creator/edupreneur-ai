@@ -30,7 +30,7 @@ export default function Auth() {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { data: { full_name: fullName } },
+          options: { data: { full_name: fullName, school_name: schoolName } },
         });
         if (error) throw error;
 
