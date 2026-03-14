@@ -13,6 +13,7 @@ import { User, Camera, Loader2 } from "lucide-react";
 export default function Profil() {
   const { user } = useAuth();
   const [fullName, setFullName] = useState("");
+  const [schoolName, setSchoolName] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
