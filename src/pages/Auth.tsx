@@ -12,6 +12,7 @@ export default function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
+  const [schoolName, setSchoolName] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
@@ -29,7 +30,7 @@ export default function Auth() {
         const { data, error } = await supabase.auth.signUp({
           email,
           password,
-          options: { data: { full_name: fullName } },
+          options: { data: { full_name: fullName, school_name: schoolName } },
         });
         if (error) throw error;
 
@@ -61,10 +62,16 @@ export default function Auth() {
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
-              <div>
-                <Label>Nama Lengkap</Label>
-                <Input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Nama lengkap Anda" required />
-              </div>
+              <>
+                <div>
+                  <Label>Nama Lengkap</Label>
+                  <Input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Nama lengkap Anda" required />
+                </div>
+                <div>
+                  <Label>Nama Sekolah</Label>
+                  <Input value={schoolName} onChange={(e) => setSchoolName(e.target.value)} placeholder="cth: SDIT Al-Fatih atau SMP Negeri 1" required />
+                </div>
+              </>
             )}
             <div>
               <Label>Email</Label>
@@ -81,7 +88,7 @@ export default function Auth() {
           <div className="text-center text-sm text-muted-foreground mt-4 space-y-2">
             <p>
               {isLogin ? "Belum punya akun?" : "Sudah punya akun?"}{" "}
-              <button onClick={() => { setIsLogin(!isLogin); setEmail(""); setPassword(""); setFullName(""); }} className="text-primary font-medium hover:underline">
+              <button onClick={() => { setIsLogin(!isLogin); setEmail(""); setPassword(""); setFullName(""); setSchoolName(""); }} className="text-primary font-medium hover:underline">
                 {isLogin ? "Daftar" : "Masuk"}
               </button>
             </p>

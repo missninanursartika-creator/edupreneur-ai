@@ -13,6 +13,7 @@ import { User, Camera, Loader2 } from "lucide-react";
 export default function Profil() {
   const { user } = useAuth();
   const [fullName, setFullName] = useState("");
+  const [schoolName, setSchoolName] = useState("");
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -23,12 +24,13 @@ export default function Profil() {
     if (!user) return;
     supabase
       .from("profiles")
-      .select("full_name, avatar_url")
+      .select("full_name, avatar_url, school_name")
       .eq("id", user.id)
       .single()
       .then(({ data }) => {
         if (data) {
           setFullName(data.full_name || "");
+          setSchoolName((data as any).school_name || "");
           setAvatarUrl(data.avatar_url);
         }
         setLoading(false);
@@ -40,7 +42,7 @@ export default function Profil() {
     setSaving(true);
     const { error } = await supabase
       .from("profiles")
-      .update({ full_name: fullName, updated_at: new Date().toISOString() })
+      .update({ full_name: fullName, school_name: schoolName, updated_at: new Date().toISOString() } as any)
       .eq("id", user.id);
     setSaving(false);
     if (error) {
@@ -152,6 +154,14 @@ export default function Profil() {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 placeholder="Masukkan nama lengkap"
+              />
+            </div>
+            <div>
+              <Label>Nama Sekolah</Label>
+              <Input
+                value={schoolName}
+                onChange={(e) => setSchoolName(e.target.value)}
+                placeholder="cth: SDIT Al-Fatih atau SMP Negeri 1"
               />
             </div>
             <Button onClick={handleSave} disabled={saving} className="w-full">
