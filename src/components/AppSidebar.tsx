@@ -1,7 +1,7 @@
 import {
   LayoutDashboard, Search, Users, Target, BookOpen, Heart,
   Lightbulb, Dna, Briefcase, Megaphone, PenTool, MessageCircle,
-  BarChart3, History, LogOut, UserCircle, Fingerprint, Sparkles
+  BarChart3, History, LogOut, UserCircle, Fingerprint, Sparkles, Compass
 } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import {
