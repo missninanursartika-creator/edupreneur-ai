@@ -25,6 +25,7 @@ import Riwayat from "./pages/Riwayat";
 import Profil from "./pages/Profil";
 import AnalisisJatidiri from "./pages/AnalisisJatidiri";
 import IdeJatidiriAI from "./pages/IdeJatidiriAI";
+import ArsitekKonsepAI from "./pages/ArsitekKonsepAI";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
