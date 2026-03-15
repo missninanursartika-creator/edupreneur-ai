@@ -24,6 +24,7 @@ const menuItems = [
   { title: "Model Bisnis Sekolah", url: "/model-bisnis", icon: Briefcase },
   { title: "Analisis Jatidiri", url: "/analisis-jatidiri", icon: Fingerprint },
   { title: "Ide Jatidiri AI", url: "/ide-jatidiri-ai", icon: Sparkles },
+  { title: "Arsitek Konsep AI", url: "/arsitek-konsep-ai", icon: Compass },
   { title: "Strategi Marketing PPDB", url: "/marketing-ppdb", icon: Megaphone },
   { title: "Konten Marketing", url: "/konten-marketing", icon: PenTool },
   { title: "AI Konsultan Sekolah", url: "/konsultan-ai", icon: MessageCircle },
